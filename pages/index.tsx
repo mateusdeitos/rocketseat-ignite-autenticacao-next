@@ -1,11 +1,13 @@
+import { GetServerSideProps } from 'next';
 import { FormEvent, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext';
 //@ts-ignore
 import styles from '../styles/Home.module.css';
+import { withSSRGuest } from '../utils/withSSRGuest';
 
 export default function Home() {
 	const [formData, setFormData] = useState({ email: "", password: "" });
-	const { isAuthenticated, signIn } = useAuth();
+	const { signIn } = useAuth();
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
 		signIn(formData);
@@ -18,3 +20,8 @@ export default function Home() {
 		</form>
 	)
 }
+
+// withSSRGuest é uma High Order Function que irá redirecionar para o dashboard caso o user esteja logado
+export const getServerSideProps: GetServerSideProps = withSSRGuest(async (ctx) => {
+	return { props: { users: [] } }
+})
