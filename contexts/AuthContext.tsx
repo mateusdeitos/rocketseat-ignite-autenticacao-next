@@ -19,6 +19,7 @@ type AuthContextData = {
 	signOut(): void;
 	user: User;
 	isAuthenticated: boolean;
+	isLoading: boolean;
 }
 
 export const signOut = () => {
@@ -37,6 +38,7 @@ let authChannel: BroadcastChannel;
 
 export const AuthContextProvider: FC = ({ children }) => {
 	const [user, setUser] = useState<User>();
+	const [isLoading, setIsLoading] = useState(true);
 
 	// Caso um signOut seja feito em outra guia/janela, realiza o signOut na guia/janela atual
 	useEffect(() => {
@@ -60,6 +62,9 @@ export const AuthContextProvider: FC = ({ children }) => {
 				setUser({ email, permissions, roles });
 			})
 				.catch(() => signOut())
+				.finally(() => setIsLoading(false));
+		} else {
+			setIsLoading(false);
 		}
 	}, [])
 
@@ -102,7 +107,7 @@ export const AuthContextProvider: FC = ({ children }) => {
 
 	}
 
-	return <AuthContext.Provider value={{ isAuthenticated: !!user, signIn, user, signOut }}>
+	return <AuthContext.Provider value={{ isAuthenticated: !!user, signIn, user, signOut, isLoading }}>
 		{children}
 	</AuthContext.Provider>
 }
