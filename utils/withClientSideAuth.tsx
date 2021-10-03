@@ -12,5 +12,9 @@ export const withClientSideAuth = Child => props => {
 		}
 	}, [isAuthenticated, isLoading])
 
+	if (isLoading) {
+		return <div>Carregando...</div>
+	}
+
 	return <Child {...props} />
 }
